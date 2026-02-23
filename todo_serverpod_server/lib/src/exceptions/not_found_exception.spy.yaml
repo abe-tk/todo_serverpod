@@ -1,0 +1,5 @@
+exception: NotFoundException
+fields:
+  statusCode: int, default=404
+  message: String, default='Resource not found.'
+  errorCode: String, default='NOT_FOUND'

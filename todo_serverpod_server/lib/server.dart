@@ -6,8 +6,10 @@ import 'package:serverpod_auth_idp_server/providers/email.dart';
 
 import 'src/generated/endpoints.dart';
 import 'src/generated/protocol.dart';
+import 'src/web/middleware/api_error_middleware.dart';
 import 'src/web/routes/app_config_route.dart';
 import 'src/web/routes/root.dart';
+import 'src/web/routes/todo_rest_route.dart';
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
@@ -48,6 +50,11 @@ void run(List<String> args) async {
     AppConfigRoute(apiConfig: pod.config.apiServer),
     '/app/assets/assets/config.json',
   );
+
+  // REST-style todo routes for external clients.
+  // Any uncaught exception under /api is mapped to a JSON 500 response.
+  pod.webServer.addMiddleware(apiErrorMiddleware(), '/api');
+  pod.webServer.addRoute(TodoRestRoute(), '/api/todos');
 
   // Checks if the flutter web app has been built and serves it if it has.
   final appDir = Directory(Uri(path: 'web/app').toFilePath());

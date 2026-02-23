@@ -1,0 +1,5 @@
+exception: ValidationException
+fields:
+  statusCode: int, default=400
+  message: String, default='Invalid request.'
+  errorCode: String, default='VALIDATION_ERROR'

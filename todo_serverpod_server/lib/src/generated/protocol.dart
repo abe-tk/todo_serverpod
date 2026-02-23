@@ -16,8 +16,15 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i3;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i4;
-import 'greetings/greeting.dart' as _i5;
+import 'exceptions/not_found_exception.dart' as _i5;
+import 'exceptions/validation_exception.dart' as _i6;
+import 'greetings/greeting.dart' as _i7;
+import 'todo/todo.dart' as _i8;
+import 'package:todo_serverpod_server/src/generated/todo/todo.dart' as _i9;
+export 'exceptions/not_found_exception.dart';
+export 'exceptions/validation_exception.dart';
 export 'greetings/greeting.dart';
+export 'todo/todo.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
   Protocol._();
@@ -27,6 +34,77 @@ class Protocol extends _i1.SerializationManagerServer {
   static final Protocol _instance = Protocol._();
 
   static final List<_i2.TableDefinition> targetTableDefinitions = [
+    _i2.TableDefinition(
+      name: 'todo',
+      dartName: 'Todo',
+      schema: 'public',
+      module: 'todo_serverpod',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'todo_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'title',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'description',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isDone',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+          columnDefault: 'false',
+        ),
+        _i2.ColumnDefinition(
+          name: 'dueDate',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'todo_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
     ..._i3.Protocol.targetTableDefinitions,
     ..._i4.Protocol.targetTableDefinitions,
     ..._i2.Protocol.targetTableDefinitions,
@@ -59,11 +137,33 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
 
-    if (t == _i5.Greeting) {
-      return _i5.Greeting.fromJson(data) as T;
+    if (t == _i5.NotFoundException) {
+      return _i5.NotFoundException.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i5.Greeting?>()) {
-      return (data != null ? _i5.Greeting.fromJson(data) : null) as T;
+    if (t == _i6.ValidationException) {
+      return _i6.ValidationException.fromJson(data) as T;
+    }
+    if (t == _i7.Greeting) {
+      return _i7.Greeting.fromJson(data) as T;
+    }
+    if (t == _i8.Todo) {
+      return _i8.Todo.fromJson(data) as T;
+    }
+    if (t == _i1.getType<_i5.NotFoundException?>()) {
+      return (data != null ? _i5.NotFoundException.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i6.ValidationException?>()) {
+      return (data != null ? _i6.ValidationException.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i7.Greeting?>()) {
+      return (data != null ? _i7.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i8.Todo?>()) {
+      return (data != null ? _i8.Todo.fromJson(data) : null) as T;
+    }
+    if (t == List<_i9.Todo>) {
+      return (data as List).map((e) => deserialize<_i9.Todo>(e)).toList() as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
@@ -79,7 +179,10 @@ class Protocol extends _i1.SerializationManagerServer {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _i5.Greeting => 'Greeting',
+      _i5.NotFoundException => 'NotFoundException',
+      _i6.ValidationException => 'ValidationException',
+      _i7.Greeting => 'Greeting',
+      _i8.Todo => 'Todo',
       _ => null,
     };
   }
@@ -97,8 +200,14 @@ class Protocol extends _i1.SerializationManagerServer {
     }
 
     switch (data) {
-      case _i5.Greeting():
+      case _i5.NotFoundException():
+        return 'NotFoundException';
+      case _i6.ValidationException():
+        return 'ValidationException';
+      case _i7.Greeting():
         return 'Greeting';
+      case _i8.Todo():
+        return 'Todo';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -121,8 +230,17 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'NotFoundException') {
+      return deserialize<_i5.NotFoundException>(data['data']);
+    }
+    if (dataClassName == 'ValidationException') {
+      return deserialize<_i6.ValidationException>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i5.Greeting>(data['data']);
+      return deserialize<_i7.Greeting>(data['data']);
+    }
+    if (dataClassName == 'Todo') {
+      return deserialize<_i8.Todo>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -158,6 +276,10 @@ class Protocol extends _i1.SerializationManagerServer {
       if (table != null) {
         return table;
       }
+    }
+    switch (t) {
+      case _i8.Todo:
+        return _i8.Todo.t;
     }
     return null;
   }

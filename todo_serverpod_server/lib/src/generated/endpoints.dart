@@ -14,10 +14,12 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../auth/email_idp_endpoint.dart' as _i2;
 import '../auth/jwt_refresh_endpoint.dart' as _i3;
 import '../greetings/greeting_endpoint.dart' as _i4;
+import '../todo/todo_endpoint.dart' as _i5;
+import 'package:todo_serverpod_server/src/generated/todo/todo.dart' as _i6;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i5;
+    as _i7;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i6;
+    as _i8;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -39,6 +41,12 @@ class Endpoints extends _i1.EndpointDispatch {
         ..initialize(
           server,
           'greeting',
+          null,
+        ),
+      'todo': _i5.TodoEndpoint()
+        ..initialize(
+          server,
+          'todo',
           null,
         ),
     };
@@ -270,9 +278,111 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i5.Endpoints()
+    connectors['todo'] = _i1.EndpointConnector(
+      name: 'todo',
+      endpoint: endpoints['todo']!,
+      methodConnectors: {
+        'getTodo': _i1.MethodConnector(
+          name: 'getTodo',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['todo'] as _i5.TodoEndpoint).getTodo(
+                session,
+                id: params['id'],
+              ),
+        ),
+        'getTodos': _i1.MethodConnector(
+          name: 'getTodos',
+          params: {
+            'sortBy': _i1.ParameterDescription(
+              name: 'sortBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'order': _i1.ParameterDescription(
+              name: 'order',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['todo'] as _i5.TodoEndpoint).getTodos(
+                session,
+                sortBy: params['sortBy'],
+                order: params['order'],
+              ),
+        ),
+        'addTodo': _i1.MethodConnector(
+          name: 'addTodo',
+          params: {
+            'todo': _i1.ParameterDescription(
+              name: 'todo',
+              type: _i1.getType<_i6.Todo>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['todo'] as _i5.TodoEndpoint).addTodo(
+                session,
+                todo: params['todo'],
+              ),
+        ),
+        'updateTodo': _i1.MethodConnector(
+          name: 'updateTodo',
+          params: {
+            'todo': _i1.ParameterDescription(
+              name: 'todo',
+              type: _i1.getType<_i6.Todo>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['todo'] as _i5.TodoEndpoint).updateTodo(
+                session,
+                todo: params['todo'],
+              ),
+        ),
+        'deleteTodo': _i1.MethodConnector(
+          name: 'deleteTodo',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['todo'] as _i5.TodoEndpoint).deleteTodo(
+                session,
+                id: params['id'],
+              ),
+        ),
+      },
+    );
+    modules['serverpod_auth_idp'] = _i7.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i6.Endpoints()
+    modules['serverpod_auth_core'] = _i8.Endpoints()
       ..initializeEndpoints(server);
   }
 }

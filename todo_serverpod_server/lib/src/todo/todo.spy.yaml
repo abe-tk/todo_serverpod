@@ -1,0 +1,9 @@
+class: Todo
+table: todo
+fields:
+  title: String
+  description: String?
+  isDone: bool, default=false
+  dueDate: DateTime?
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
